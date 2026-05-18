@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+catalog:
+  zod: "^4.4.3"
+allowBuilds:
+  core-js-pure: true
+  esbuild: true
+  msw: true
+  unrs-resolver: true
