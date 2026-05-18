@@ -1,34 +1,47 @@
 import { Google } from "@ridemountainpig/svgl-react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
+import { toastManager } from "@workspace/ui/components/toast";
 import { useState } from "react";
 import z from "zod";
 
+import { authClient } from "@/lib/auth";
 import { useAppForm } from "@/lib/form";
 
-export const Route = createFileRoute("/auth/signup")({ component: SignUpPage });
+export const Route = createFileRoute("/auth/(redir)/signin")({
+  component: SignInPage,
+});
 
-function SignUpPage() {
+function SignInPage() {
+  const { rt } = Route.useSearch();
   const [step, setStep] = useState<"email" | "password">("email");
 
   const form = useAppForm({
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { email: "", password: "" },
     validators: {
       onChange: z.object({
         email: z.email(),
-        name: z.string(),
         password: z.string().min(8, {
           error: "Password must be at least 8 characters long",
         }),
       }),
     },
-    onSubmit: ({ value }) => {
-      if (step === "email") {
-        setStep("password");
-        return;
-      }
-      console.log("sign up:", value);
-    },
+    onSubmit: ({ value }) =>
+      authClient.signIn.email(
+        {
+          email: value.email,
+          password: value.password,
+          callbackURL: rt ?? "/auth/organization",
+        },
+        {
+          onError: (error) => {
+            toastManager.add({
+              title: "Failed to sign in",
+              description: error.error.message,
+            });
+          },
+        }
+      ),
   });
 
   return (
@@ -41,7 +54,7 @@ function SignUpPage() {
 
         {/* Heading */}
         <h1 className="text-foreground text-2xl font-semibold mb-8">
-          Create your account
+          Sign in to Acme
         </h1>
 
         {/* Card */}
@@ -49,6 +62,10 @@ function SignUpPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              if (step === "email") {
+                setStep("password");
+                return;
+              }
               form.handleSubmit();
             }}
             className="flex flex-col gap-3"
@@ -60,12 +77,9 @@ function SignUpPage() {
               )}
             </form.AppField>
 
-            {/* Name + Password — revealed after email step */}
+            {/* Password field — revealed after email step */}
             {step === "password" && (
-              <div className="flex flex-col gap-3 motion-preset-slide-up motion-duration-200">
-                <form.AppField name="name">
-                  {(field) => <field.InputField field="name" label="Name" />}
-                </form.AppField>
+              <div className="motion-preset-slide-up motion-duration-200">
                 <form.AppField name="password">
                   {(field) => (
                     <field.InputField
@@ -78,7 +92,7 @@ function SignUpPage() {
               </div>
             )}
 
-            {/* Continue / Create account button */}
+            {/* Continue / Sign in button */}
             {step === "email" ? (
               <Button
                 size="lg"
@@ -90,7 +104,7 @@ function SignUpPage() {
             ) : (
               <form.AppForm>
                 <form.SubmitButton
-                  label="Create account"
+                  label="Sign in"
                   size="lg"
                   className="w-full mt-2"
                 />
@@ -107,14 +121,14 @@ function SignUpPage() {
             Continue with Google
           </button>
 
-          {/* Sign in link */}
+          {/* Sign up link */}
           <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            Don't have an account?{" "}
             <Link
-              to="/auth/signin"
+              to="/auth/signup"
               className="text-primary hover:text-primary/80 transition-colors"
             >
-              Sign in
+              Get started
             </Link>
           </p>
         </div>

@@ -1,33 +1,52 @@
 import { Google } from "@ridemountainpig/svgl-react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
+import { toastManager } from "@workspace/ui/components/toast";
 import { useState } from "react";
 import z from "zod";
 
+import { authClient } from "@/lib/auth";
 import { useAppForm } from "@/lib/form";
 
-export const Route = createFileRoute("/auth/signin")({ component: SignInPage });
+export const Route = createFileRoute("/auth/(redir)/signup")({
+  component: SignUpPage,
+});
 
-function SignInPage() {
+function SignUpPage() {
+  const { rt } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [step, setStep] = useState<"email" | "password">("email");
 
   const form = useAppForm({
-    defaultValues: { email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "" },
     validators: {
       onChange: z.object({
         email: z.email(),
+        name: z.string(),
         password: z.string().min(8, {
           error: "Password must be at least 8 characters long",
         }),
       }),
     },
-    onSubmit: ({ value }) => {
-      if (step === "email") {
-        setStep("password");
-        return;
-      }
-      console.log("sign in:", value);
-    },
+    onSubmit: ({ value }) =>
+      authClient.signUp.email(
+        {
+          email: value.email,
+          name: value.name,
+          password: value.password,
+        },
+        {
+          onSuccess: () => {
+            navigate({ to: rt ?? "/auth/organization" });
+          },
+          onError: (error) => {
+            toastManager.add({
+              title: "Failed to sign in",
+              description: error.error.message,
+            });
+          },
+        }
+      ),
   });
 
   return (
@@ -40,7 +59,7 @@ function SignInPage() {
 
         {/* Heading */}
         <h1 className="text-foreground text-2xl font-semibold mb-8">
-          Sign in to Acme
+          Create your account
         </h1>
 
         {/* Card */}
@@ -48,6 +67,10 @@ function SignInPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              if (step === "email") {
+                setStep("password");
+                return;
+              }
               form.handleSubmit();
             }}
             className="flex flex-col gap-3"
@@ -59,9 +82,12 @@ function SignInPage() {
               )}
             </form.AppField>
 
-            {/* Password field — revealed after email step */}
+            {/* Name + Password — revealed after email step */}
             {step === "password" && (
-              <div className="motion-preset-slide-up motion-duration-200">
+              <div className="flex flex-col gap-3 motion-preset-slide-up motion-duration-200">
+                <form.AppField name="name">
+                  {(field) => <field.InputField field="name" label="Name" />}
+                </form.AppField>
                 <form.AppField name="password">
                   {(field) => (
                     <field.InputField
@@ -74,7 +100,7 @@ function SignInPage() {
               </div>
             )}
 
-            {/* Continue / Sign in button */}
+            {/* Continue / Create account button */}
             {step === "email" ? (
               <Button
                 size="lg"
@@ -86,7 +112,7 @@ function SignInPage() {
             ) : (
               <form.AppForm>
                 <form.SubmitButton
-                  label="Sign in"
+                  label="Create account"
                   size="lg"
                   className="w-full mt-2"
                 />
@@ -103,14 +129,14 @@ function SignInPage() {
             Continue with Google
           </button>
 
-          {/* Sign up link */}
+          {/* Sign in link */}
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link
-              to="/auth/signup"
+              to="/auth/signin"
               className="text-primary hover:text-primary/80 transition-colors"
             >
-              Get started
+              Sign in
             </Link>
           </p>
         </div>

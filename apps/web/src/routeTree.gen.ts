@@ -9,58 +9,125 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthSignupRouteImport } from './routes/auth/signup'
-import { Route as AuthSigninRouteImport } from './routes/auth/signin'
+import { Route as AuthredirRouteRouteImport } from './routes/auth/(redir)/route'
+import { Route as AuthredirSignupRouteImport } from './routes/auth/(redir)/signup'
+import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signin'
+import { Route as AuthpostOrganizationRouteImport } from './routes/auth/(post)/organization'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
+const AppRouteRoute = AppRouteRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignupRoute = AuthSignupRouteImport.update({
-  id: '/auth/signup',
-  path: '/auth/signup',
+const AuthredirRouteRoute = AuthredirRouteRouteImport.update({
+  id: '/auth/(redir)',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSigninRoute = AuthSigninRouteImport.update({
-  id: '/auth/signin',
-  path: '/auth/signin',
+const AuthredirSignupRoute = AuthredirSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthredirRouteRoute,
+} as any)
+const AuthredirSigninRoute = AuthredirSigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => AuthredirRouteRoute,
+} as any)
+const AuthpostOrganizationRoute = AuthpostOrganizationRouteImport.update({
+  id: '/auth/(post)/organization',
+  path: '/auth/organization',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth/signin': typeof AuthSigninRoute
-  '/auth/signup': typeof AuthSignupRoute
+  '/app': typeof AppRouteRoute
+  '/auth': typeof AuthredirRouteRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/auth/organization': typeof AuthpostOrganizationRoute
+  '/auth/signin': typeof AuthredirSigninRoute
+  '/auth/signup': typeof AuthredirSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth/signin': typeof AuthSigninRoute
-  '/auth/signup': typeof AuthSignupRoute
+  '/app': typeof AppRouteRoute
+  '/auth': typeof AuthredirRouteRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/auth/organization': typeof AuthpostOrganizationRoute
+  '/auth/signin': typeof AuthredirSigninRoute
+  '/auth/signup': typeof AuthredirSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth/signin': typeof AuthSigninRoute
-  '/auth/signup': typeof AuthSignupRoute
+  '/app': typeof AppRouteRoute
+  '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/auth/(post)/organization': typeof AuthpostOrganizationRoute
+  '/auth/(redir)/signin': typeof AuthredirSigninRoute
+  '/auth/(redir)/signup': typeof AuthredirSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/signin' | '/auth/signup'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/api/auth/$'
+    | '/auth/organization'
+    | '/auth/signin'
+    | '/auth/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/signin' | '/auth/signup'
-  id: '__root__' | '/' | '/auth/signin' | '/auth/signup'
+  to:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/api/auth/$'
+    | '/auth/organization'
+    | '/auth/signin'
+    | '/auth/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/auth/(redir)'
+    | '/api/auth/$'
+    | '/auth/(post)/organization'
+    | '/auth/(redir)/signin'
+    | '/auth/(redir)/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthSigninRoute: typeof AuthSigninRoute
-  AuthSignupRoute: typeof AuthSignupRoute
+  AppRouteRoute: typeof AppRouteRoute
+  AuthredirRouteRoute: typeof AuthredirRouteRouteWithChildren
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  AuthpostOrganizationRoute: typeof AuthpostOrganizationRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -68,27 +135,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/signup': {
-      id: '/auth/signup'
-      path: '/auth/signup'
-      fullPath: '/auth/signup'
-      preLoaderRoute: typeof AuthSignupRouteImport
+    '/auth/(redir)': {
+      id: '/auth/(redir)'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthredirRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/signin': {
-      id: '/auth/signin'
-      path: '/auth/signin'
+    '/auth/(redir)/signup': {
+      id: '/auth/(redir)/signup'
+      path: '/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthredirSignupRouteImport
+      parentRoute: typeof AuthredirRouteRoute
+    }
+    '/auth/(redir)/signin': {
+      id: '/auth/(redir)/signin'
+      path: '/signin'
       fullPath: '/auth/signin'
-      preLoaderRoute: typeof AuthSigninRouteImport
+      preLoaderRoute: typeof AuthredirSigninRouteImport
+      parentRoute: typeof AuthredirRouteRoute
+    }
+    '/auth/(post)/organization': {
+      id: '/auth/(post)/organization'
+      path: '/auth/organization'
+      fullPath: '/auth/organization'
+      preLoaderRoute: typeof AuthpostOrganizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
+interface AuthredirRouteRouteChildren {
+  AuthredirSigninRoute: typeof AuthredirSigninRoute
+  AuthredirSignupRoute: typeof AuthredirSignupRoute
+}
+
+const AuthredirRouteRouteChildren: AuthredirRouteRouteChildren = {
+  AuthredirSigninRoute: AuthredirSigninRoute,
+  AuthredirSignupRoute: AuthredirSignupRoute,
+}
+
+const AuthredirRouteRouteWithChildren = AuthredirRouteRoute._addFileChildren(
+  AuthredirRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthSigninRoute: AuthSigninRoute,
-  AuthSignupRoute: AuthSignupRoute,
+  AppRouteRoute: AppRouteRoute,
+  AuthredirRouteRoute: AuthredirRouteRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  AuthpostOrganizationRoute: AuthpostOrganizationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

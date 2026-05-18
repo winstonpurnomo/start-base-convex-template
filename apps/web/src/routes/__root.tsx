@@ -1,14 +1,29 @@
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
+import type { ConvexQueryClient } from "@convex-dev/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
 } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { ToastProvider } from "@workspace/ui/components/toast";
 import { ThemeProvider } from "tanstack-theme-kit";
+
+import { authClient } from "@/lib/auth";
+import { getToken } from "@/lib/auth.server";
 
 import appCss from "@workspace/ui/globals.css?url";
 
-export const Route = createRootRoute({
+const getAuth = createServerFn({ method: "GET" }).handler(
+  async () => await getToken()
+);
+
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+  convexQueryClient: ConvexQueryClient;
+}>()({
   head: () => ({
     meta: [
       {
@@ -40,21 +55,41 @@ export const Route = createRootRoute({
       <p>The requested page could not be found.</p>
     </main>
   ),
+  beforeLoad: async (ctx) => {
+    const token = await getAuth();
+    if (token) {
+      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
+    }
+
+    return {
+      isAuthenticated: !!token,
+      token,
+    };
+  },
   shellComponent: RootDocument,
 });
 
 function RootDocument() {
+  const context = Route.useRouteContext();
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <ThemeProvider>
-          <Outlet />
-        </ThemeProvider>
-        <Scripts />
-      </body>
-    </html>
+    <ConvexBetterAuthProvider
+      client={context.convexQueryClient.convexClient}
+      authClient={authClient}
+      initialToken={context.token}
+    >
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          <ThemeProvider>
+            <ToastProvider>
+              <Outlet />
+            </ToastProvider>
+          </ThemeProvider>
+          <Scripts />
+        </body>
+      </html>
+    </ConvexBetterAuthProvider>
   );
 }

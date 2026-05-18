@@ -13,4 +13,7 @@ export default defineConfig({
     host: "127.0.0.1",
     port: Number(process.env.PORT) || 3000,
   },
+  ssr: {
+    noExternal: ["@convex-dev/better-auth"],
+  },
 });

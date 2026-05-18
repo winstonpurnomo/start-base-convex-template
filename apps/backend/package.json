@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "convex dev",
     "logs": "convex logs",
-    "lint": "tsc -p convex && oxlint --fix"
+    "lint": "tsc -p convex && oxlint --fix",
+    "auth:generate": "pnpm dlx auth generate --config convex/betterAuth/auth.ts --output convex/betterAuth/schema.gen.ts"
   },
   "dependencies": {
+    "@convex-dev/better-auth": "^0.12.2",
+    "better-auth": "~1.6.11",
     "convex": "^1.39.1"
   },
   "devDependencies": {
