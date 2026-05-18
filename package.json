@@ -13,11 +13,12 @@
     "fix": "ultracite fix"
   },
   "devDependencies": {
+    "@convex-dev/eslint-plugin": "^2.0.0",
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.50.0",
     "oxlint": "^1.65.0",
     "turbo": "^2.9.14",
-    "typescript": "6.0.3",
+    "typescript": "catalog:",
     "ultracite": "7.7.0"
   },
   "lint-staged": {

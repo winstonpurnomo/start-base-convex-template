@@ -22,4 +22,25 @@ export default defineConfig({
     "worker-configuration.d.ts",
     "**/_generated/**/*.{js,jsx,ts,tsx}",
   ],
+  overrides: [
+    {
+      files: ["**/convex/**/*"],
+      jsPlugins: ["@convex-dev/eslint-plugin"],
+      rules: {
+        "require-await": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off",
+        "unicorn/filename-case": [
+          "error",
+          {
+            case: "camelCase",
+          },
+        ],
+      },
+    },
+  ],
 });

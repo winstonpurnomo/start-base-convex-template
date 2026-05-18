@@ -21,6 +21,7 @@
     "allowJs": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@workspace/backend/*": ["../backend/convex/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     }
   }
