@@ -17,6 +17,7 @@
     "@ridemountainpig/svgl-react": "^1.0.16",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-form": "^1.32.0",
+    "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-router": "^1.170.4",
     "@tanstack/react-router-ssr-query": "^1.167.0",

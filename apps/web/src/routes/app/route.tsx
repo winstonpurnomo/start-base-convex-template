@@ -1,5 +1,7 @@
 import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
 
+import { Launcher } from "@/components/launcher";
+import { LauncherProvider } from "@/components/launcher-context";
 import { getSession } from "@/server/functions";
 
 export const Route = createFileRoute("/app")({
@@ -28,5 +30,14 @@ export const Route = createFileRoute("/app")({
       },
     };
   },
-  component: Outlet,
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  return (
+    <LauncherProvider>
+      <Launcher />
+      <Outlet />
+    </LauncherProvider>
+  );
+}

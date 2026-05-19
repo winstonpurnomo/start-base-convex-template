@@ -3,6 +3,7 @@ import {
   useConvexMutation,
   useConvexPaginatedQuery,
 } from "@convex-dev/react-query";
+import { formatForDisplay } from "@tanstack/react-hotkeys";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   createColumnHelper,
@@ -12,6 +13,7 @@ import {
 import { api } from "@workspace/backend/_generated/api";
 import type { Doc } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
+import { Kbd } from "@workspace/ui/components/kbd";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +29,7 @@ import { useState } from "react";
 import z from "zod";
 
 import { AppLayout } from "@/components/app-layout";
+import { useRegisterCommands } from "@/components/launcher-context";
 import { PaginatedTable } from "@/components/paginated-table";
 import { useAppForm } from "@/lib/form";
 
@@ -56,6 +59,23 @@ export const Route = createFileRoute("/app/(sidebar)/")({
 function CreateResourceSheet({ organizationId }: { organizationId: string }) {
   const [open, setOpen] = useState(false);
   const createResource = useConvexMutation(api.resource.crud.create);
+
+  useRegisterCommands(
+    [
+      {
+        groupLabel: "Resources",
+        items: [
+          {
+            label: "New resource",
+            action: () => setOpen(true),
+            icon: PlusIcon,
+            hotkey: "N",
+          },
+        ],
+      },
+    ],
+    []
+  );
 
   const form = useAppForm({
     defaultValues: { title: "" },
@@ -87,6 +107,7 @@ function CreateResourceSheet({ organizationId }: { organizationId: string }) {
           <Button {...props}>
             <PlusIcon className="size-4" />
             New resource
+            <Kbd>{formatForDisplay("N")}</Kbd>
           </Button>
         )}
       />
