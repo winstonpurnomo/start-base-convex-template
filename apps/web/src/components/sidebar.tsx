@@ -27,6 +27,7 @@ import {
   EyeOffIcon,
   HouseIcon,
   LogOutIcon,
+  SettingsIcon,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -49,6 +50,7 @@ interface SidebarUserMenuProps {
   initials: string;
   onSignOut: () => void;
   onSwitchOrg: () => void;
+  onSettings: () => void;
 }
 
 function SidebarUserMenu({
@@ -57,6 +59,7 @@ function SidebarUserMenu({
   initials,
   onSignOut,
   onSwitchOrg,
+  onSettings,
 }: SidebarUserMenuProps) {
   const { state } = useSidebar();
   const [showEmail, setShowEmail] = useState(() => {
@@ -121,6 +124,10 @@ function SidebarUserMenu({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onSettings}>
+                <SettingsIcon />
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={onSwitchOrg}>
                 <BuildingIcon />
                 Switch organization
@@ -143,6 +150,7 @@ interface SidebarProps {
   userInitials: string;
   onSignOut: () => void;
   onSwitchOrg: () => void;
+  onSettings: () => void;
 }
 
 export function Sidebar({
@@ -151,6 +159,7 @@ export function Sidebar({
   userInitials,
   onSignOut,
   onSwitchOrg,
+  onSettings,
 }: SidebarProps) {
   return (
     <SidebarPrimitive collapsible="icon">
@@ -195,6 +204,7 @@ export function Sidebar({
           initials={userInitials}
           onSignOut={onSignOut}
           onSwitchOrg={onSwitchOrg}
+          onSettings={onSettings}
         />
       </SidebarFooter>
     </SidebarPrimitive>

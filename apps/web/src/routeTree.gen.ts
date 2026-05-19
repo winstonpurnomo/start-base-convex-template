@@ -11,11 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AuthredirRouteRouteImport } from './routes/auth/(redir)/route'
+import { Route as AppSettingsRouteRouteImport } from './routes/app/settings/route'
+import { Route as AppsidebarRouteRouteImport } from './routes/app/(sidebar)/route'
+import { Route as AppsidebarIndexRouteImport } from './routes/app/(sidebar)/index'
 import { Route as AuthredirSignupRouteImport } from './routes/auth/(redir)/signup'
 import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signin'
 import { Route as AuthpostOrganizationRouteImport } from './routes/auth/(post)/organization'
+import { Route as AppSettingsThemeRouteImport } from './routes/app/settings/theme'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const AppRouteRoute = AppRouteRouteImport.update({
@@ -28,15 +31,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AuthredirRouteRoute = AuthredirRouteRouteImport.update({
   id: '/auth/(redir)',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppSettingsRouteRoute = AppSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppsidebarRouteRoute = AppsidebarRouteRouteImport.update({
+  id: '/(sidebar)',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppsidebarIndexRoute = AppsidebarIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppsidebarRouteRoute,
 } as any)
 const AuthredirSignupRoute = AuthredirSignupRouteImport.update({
   id: '/signup',
@@ -53,6 +65,11 @@ const AuthpostOrganizationRoute = AuthpostOrganizationRouteImport.update({
   path: '/auth/organization',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppSettingsThemeRoute = AppSettingsThemeRouteImport.update({
+  id: '/theme',
+  path: '/theme',
+  getParentRoute: () => AppSettingsRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -61,19 +78,23 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteRouteWithChildren
+  '/app': typeof AppsidebarRouteRouteWithChildren
+  '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
-  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
   '/auth/signup': typeof AuthredirSignupRoute
+  '/app/': typeof AppsidebarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppsidebarIndexRoute
+  '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
-  '/app': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
   '/auth/signup': typeof AuthredirSignupRoute
@@ -82,30 +103,37 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
+  '/app/(sidebar)': typeof AppsidebarRouteRouteWithChildren
+  '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
-  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/(post)/organization': typeof AuthpostOrganizationRoute
   '/auth/(redir)/signin': typeof AuthredirSigninRoute
   '/auth/(redir)/signup': typeof AuthredirSignupRoute
+  '/app/(sidebar)/': typeof AppsidebarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/app'
+    | '/app/settings'
     | '/auth'
-    | '/app/'
     | '/api/auth/$'
+    | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
     | '/auth/signup'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/app'
+    | '/app/settings'
+    | '/auth'
     | '/api/auth/$'
+    | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
     | '/auth/signup'
@@ -113,12 +141,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/(sidebar)'
+    | '/app/settings'
     | '/auth/(redir)'
-    | '/app/'
     | '/api/auth/$'
+    | '/app/settings/theme'
     | '/auth/(post)/organization'
     | '/auth/(redir)/signin'
     | '/auth/(redir)/signup'
+    | '/app/(sidebar)/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,19 +176,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/auth/(redir)': {
       id: '/auth/(redir)'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthredirRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/(sidebar)': {
+      id: '/app/(sidebar)'
+      path: ''
+      fullPath: '/app'
+      preLoaderRoute: typeof AppsidebarRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/(sidebar)/': {
+      id: '/app/(sidebar)/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppsidebarIndexRouteImport
+      parentRoute: typeof AppsidebarRouteRoute
     }
     '/auth/(redir)/signup': {
       id: '/auth/(redir)/signup'
@@ -180,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthpostOrganizationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/settings/theme': {
+      id: '/app/settings/theme'
+      path: '/theme'
+      fullPath: '/app/settings/theme'
+      preLoaderRoute: typeof AppSettingsThemeRouteImport
+      parentRoute: typeof AppSettingsRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -190,12 +242,37 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppsidebarRouteRouteChildren {
+  AppsidebarIndexRoute: typeof AppsidebarIndexRoute
+}
+
+const AppsidebarRouteRouteChildren: AppsidebarRouteRouteChildren = {
+  AppsidebarIndexRoute: AppsidebarIndexRoute,
+}
+
+const AppsidebarRouteRouteWithChildren = AppsidebarRouteRoute._addFileChildren(
+  AppsidebarRouteRouteChildren,
+)
+
+interface AppSettingsRouteRouteChildren {
+  AppSettingsThemeRoute: typeof AppSettingsThemeRoute
+}
+
+const AppSettingsRouteRouteChildren: AppSettingsRouteRouteChildren = {
+  AppSettingsThemeRoute: AppSettingsThemeRoute,
+}
+
+const AppSettingsRouteRouteWithChildren =
+  AppSettingsRouteRoute._addFileChildren(AppSettingsRouteRouteChildren)
+
 interface AppRouteRouteChildren {
-  AppIndexRoute: typeof AppIndexRoute
+  AppsidebarRouteRoute: typeof AppsidebarRouteRouteWithChildren
+  AppSettingsRouteRoute: typeof AppSettingsRouteRouteWithChildren
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppIndexRoute: AppIndexRoute,
+  AppsidebarRouteRoute: AppsidebarRouteRouteWithChildren,
+  AppSettingsRouteRoute: AppSettingsRouteRouteWithChildren,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

@@ -39,7 +39,7 @@ const columns = [
   }),
 ];
 
-export const Route = createFileRoute("/app/")({
+export const Route = createFileRoute("/app/(sidebar)/")({
   loader: async ({ context }) =>
     await context.queryClient.ensureQueryData(
       convexQuery(api.resource.crud.list, {
