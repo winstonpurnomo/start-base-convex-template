@@ -88,23 +88,25 @@ function CreateOrgSheet({ onSuccess }: { onSuccess: (orgId: string) => void }) {
           }),
       }),
     },
-    onSubmit: async ({ value }) => {
-      const result = await authClient.organization.create({
-        name: value.name.trim(),
-        slug: value.slug,
-      });
-      if (result.error) {
-        toastManager.add({
-          title: "Failed to create organization",
-          description: result.error.message,
-        });
-        return;
-      }
-      if (result.data?.id) {
-        setOpen(false);
-        onSuccess(result.data.id);
-      }
-    },
+    onSubmit: async ({ value }) =>
+      await authClient.organization.create(
+        {
+          name: value.name.trim(),
+          slug: value.slug,
+        },
+        {
+          onSuccess: (result) => {
+            setOpen(false);
+            onSuccess(result.data.id);
+          },
+          onError: (error) => {
+            toastManager.add({
+              title: "Failed to create organization",
+              description: error.error.message,
+            });
+          },
+        }
+      ),
   });
 
   return (

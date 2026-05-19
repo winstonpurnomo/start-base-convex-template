@@ -121,11 +121,11 @@ function SidebarUserMenu({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={onSwitchOrg}>
+              <DropdownMenuItem onClick={onSwitchOrg}>
                 <BuildingIcon />
                 Switch organization
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onSignOut} variant="destructive">
+              <DropdownMenuItem onClick={onSignOut} variant="destructive">
                 <LogOutIcon />
                 Sign out
               </DropdownMenuItem>

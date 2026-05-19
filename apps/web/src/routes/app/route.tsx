@@ -60,7 +60,7 @@ function RouteComponent() {
   }
 
   function handleSwitchOrg() {
-    navigate({ to: "/auth/organization", search: { rt: "/app" } });
+    navigate({ to: "/auth/organization" });
   }
 
   return (
