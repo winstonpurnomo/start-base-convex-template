@@ -93,7 +93,7 @@ function useGlobalActions(): ActionGroup[] {
 
 export function Launcher() {
   const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState<string | undefined>();
   const { localCommandGroups } = useLauncherContext();
 
   useHotkey("Mod+K", () => {
@@ -162,15 +162,15 @@ export function Launcher() {
               {g.items.map(({ label, icon: Icon, action, hotkey }) => (
                 <CommandItem
                   key={label}
-                  disabled={pending}
+                  disabled={!!pending}
                   onSelect={async () => {
-                    setPending(true);
+                    setPending(label);
                     await action();
                     setOpen(false);
-                    setPending(false);
+                    setPending(undefined);
                   }}
                 >
-                  {pending ? <Spinner /> : <Icon />}
+                  {pending === label ? <Spinner /> : <Icon />}
                   <span>{label}</span>
                   {hotkey && (
                     <CommandShortcut>
