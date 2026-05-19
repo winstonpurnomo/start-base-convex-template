@@ -32,6 +32,13 @@ export const Route = createFileRoute("/app")({
         },
       });
     }
+    return {
+      ...data,
+      session: {
+        ...data.session,
+        activeOrganizationId: data.session.activeOrganizationId as string,
+      },
+    };
   },
   component: RouteComponent,
 });

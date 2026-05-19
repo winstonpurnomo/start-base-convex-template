@@ -10,7 +10,8 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
-import type * as myFunctions from "../myFunctions.js";
+import type * as middleware from "../middleware.js";
+import type * as resource_crud from "../resource/crud.js";
 
 import type {
   ApiFromModules,
@@ -21,7 +22,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
-  myFunctions: typeof myFunctions;
+  middleware: typeof middleware;
+  "resource/crud": typeof resource_crud;
 }>;
 
 /**

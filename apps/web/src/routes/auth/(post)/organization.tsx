@@ -32,6 +32,8 @@ import { toastManager } from "@workspace/ui/components/toast";
 import {
   ArrowRightIcon,
   Building2Icon,
+  EyeIcon,
+  EyeOffIcon,
   LogOutIcon,
   PlusIcon,
 } from "lucide-react";
@@ -41,6 +43,7 @@ import z from "zod";
 import { authClient } from "@/lib/auth";
 import { useAppForm } from "@/lib/form";
 import { getSession } from "@/server/functions";
+const EMAIL_VISIBILITY_KEY = "sidebar:show-email";
 
 export const Route = createFileRoute("/auth/(post)/organization")({
   validateSearch: z.object({
@@ -128,6 +131,7 @@ function CreateOrgSheet({ onSuccess }: { onSuccess: (orgId: string) => void }) {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             form.handleSubmit();
           }}
           className="flex flex-col gap-3 px-4"
@@ -181,8 +185,25 @@ function RouteComponent() {
   const router = useRouter();
   const navigate = Route.useNavigate();
   const [selectingOrgId, setSelectingOrgId] = useState<string | null>(null);
+  const [showEmail, setShowEmail] = useState(() => {
+    try {
+      return localStorage.getItem(EMAIL_VISIBILITY_KEY) !== "false";
+    } catch {
+      return true;
+    }
+  });
   const { data: session } = authClient.useSession();
   const { data: orgs, isPending } = authClient.useListOrganizations();
+
+  function toggleShowEmail() {
+    const next = !showEmail;
+    setShowEmail(next);
+    try {
+      localStorage.setItem(EMAIL_VISIBILITY_KEY, String(next));
+    } catch {
+      // ignore
+    }
+  }
 
   const handleSignOut = useCallback(async () => {
     await authClient.signOut();
@@ -283,9 +304,21 @@ function RouteComponent() {
           <DropdownMenuGroup>
             <DropdownMenuLabel className="flex flex-col">
               <span className="font-medium text-foreground">{user.name}</span>
-              <span className="font-normal text-muted-foreground">
-                {user.email}
-              </span>
+              <button
+                onClick={toggleShowEmail}
+                className="flex items-center gap-1 text-left cursor-pointer group/email"
+              >
+                <span className="font-normal text-muted-foreground text-xs">
+                  {showEmail ? user.email : "•".repeat(12)}
+                </span>
+                <span className="text-muted-foreground opacity-0 group-hover/email:opacity-100 transition-opacity">
+                  {showEmail ? (
+                    <EyeOffIcon className="size-3" />
+                  ) : (
+                    <EyeIcon className="size-3" />
+                  )}
+                </span>
+              </button>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={handleSignOut} variant="destructive">
@@ -300,8 +333,12 @@ function RouteComponent() {
 
   async function handleSelectOrg(orgId: string) {
     setSelectingOrgId(orgId);
-    await authClient.organization.setActive({ organizationId: orgId });
-    navigate({ to: rt ?? "/app" });
+    await authClient.organization.setActive(
+      { organizationId: orgId },
+      {
+        onSuccess: () => navigate({ to: rt ?? "/app" }),
+      }
+    );
   }
 
   async function handleCreateOrgSuccess(orgId: string) {

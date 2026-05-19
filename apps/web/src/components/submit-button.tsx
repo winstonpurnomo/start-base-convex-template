@@ -1,4 +1,5 @@
 import { Button } from "@workspace/ui/components/button";
+import { Spinner } from "@workspace/ui/components/spinner";
 import type React from "react";
 
 import { useFormContext } from "@/lib/form/context";
@@ -14,7 +15,7 @@ export function SubmitButton({ label, ...props }: SubmitButtonProps) {
     <form.Subscribe selector={(state) => [state.isValid, state.isSubmitting]}>
       {([isValid, isSubmitting]) => (
         <Button disabled={!isValid || isSubmitting} type="submit" {...props}>
-          {isSubmitting ? "Submitting..." : label}
+          {isSubmitting ? <Spinner /> : label}
         </Button>
       )}
     </form.Subscribe>

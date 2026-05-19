@@ -21,6 +21,7 @@
     "@tanstack/react-router": "^1.170.4",
     "@tanstack/react-router-ssr-query": "^1.167.0",
     "@tanstack/react-start": "^1.168.6",
+    "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.168.6",
     "@workspace/backend": "workspace:*",
     "@workspace/ui": "workspace:*",
