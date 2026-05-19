@@ -17,12 +17,29 @@ import {
   EmptyTitle,
 } from "@workspace/ui/components/empty";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@workspace/ui/components/sheet";
 import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ArrowRight, Building2, LogOutIcon, Plus } from "lucide-react";
-import { useCallback } from "react";
+import { Spinner } from "@workspace/ui/components/spinner";
+import { toastManager } from "@workspace/ui/components/toast";
+import {
+  ArrowRightIcon,
+  Building2Icon,
+  LogOutIcon,
+  PlusIcon,
+} from "lucide-react";
+import { useCallback, useState } from "react";
 import z from "zod";
 
 import { authClient } from "@/lib/auth";
+import { useAppForm } from "@/lib/form";
 import { getSession } from "@/server/functions";
 
 export const Route = createFileRoute("/auth/(post)/organization")({
@@ -55,10 +72,113 @@ function OrgSkeleton() {
   );
 }
 
+function CreateOrgSheet({ onSuccess }: { onSuccess: (orgId: string) => void }) {
+  const [open, setOpen] = useState(false);
+
+  const form = useAppForm({
+    defaultValues: { name: "", slug: "" },
+    validators: {
+      onChange: z.object({
+        name: z.string().min(1, { error: "Organization name is required" }),
+        slug: z
+          .string()
+          .min(1, { error: "Slug is required" })
+          .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u, {
+            error: "Slug must be lowercase letters, numbers, and hyphens only",
+          }),
+      }),
+    },
+    onSubmit: async ({ value }) => {
+      const result = await authClient.organization.create({
+        name: value.name.trim(),
+        slug: value.slug,
+      });
+      if (result.error) {
+        toastManager.add({
+          title: "Failed to create organization",
+          description: result.error.message,
+        });
+        return;
+      }
+      if (result.data?.id) {
+        setOpen(false);
+        onSuccess(result.data.id);
+      }
+    },
+  });
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger className="flex items-center gap-4 rounded-xl border border-dashed border-border px-5 py-4 hover:bg-muted transition-colors cursor-pointer text-left w-full group">
+        <PlusIcon className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+        <span className="flex-1 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+          Create a new organization
+        </span>
+        <ArrowRightIcon className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+      </SheetTrigger>
+      <SheetContent side="right">
+        <SheetHeader>
+          <SheetTitle>Create organization</SheetTitle>
+          <SheetDescription>
+            Give your organization a name and a unique slug.
+          </SheetDescription>
+        </SheetHeader>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="flex flex-col gap-3 px-4"
+        >
+          <form.AppField name="name">
+            {(field) => (
+              <field.InputField field="name" label="Organization name" />
+            )}
+          </form.AppField>
+          <form.AppField
+            name="slug"
+            validators={{
+              onChangeAsyncDebounceMs: 400,
+              onChangeAsync: async ({ value }) => {
+                if (!value) {
+                  return;
+                }
+                const result = await authClient.organization.checkSlug({
+                  slug: value,
+                });
+                if (result.error || !result.data?.status) {
+                  return "This slug is already taken";
+                }
+              },
+            }}
+          >
+            {(field) => (
+              <field.InputField
+                field="slug"
+                label="Slug"
+                description="Used in URLs — lowercase letters, numbers, and hyphens only."
+                showValidIndicator
+              />
+            )}
+          </form.AppField>
+          <form.AppForm>
+            <form.SubmitButton
+              label="Create organization"
+              className="w-full mt-2"
+            />
+          </form.AppForm>
+        </form>
+        <SheetFooter />
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 function RouteComponent() {
   const { rt } = Route.useSearch();
   const router = useRouter();
   const navigate = Route.useNavigate();
+  const [selectingOrgId, setSelectingOrgId] = useState<string | null>(null);
   const { data: session } = authClient.useSession();
   const { data: orgs, isPending } = authClient.useListOrganizations();
 
@@ -89,29 +209,40 @@ function RouteComponent() {
       );
     }
     if (orgs && orgs.length > 0) {
-      return orgs.map((org) => (
-        <button
-          key={org.id}
-          onClick={() => handleSelectOrg(org.id)}
-          className="flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:bg-muted transition-colors cursor-pointer text-left w-full group"
-        >
-          <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
-            {org.name[0]?.toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-foreground truncate">
-              {org.name}
-            </p>
-            <p className="text-xs text-muted-foreground truncate">{org.slug}</p>
-          </div>
-          <ArrowRight className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-        </button>
-      ));
+      return orgs.map((org) => {
+        const isLoading = selectingOrgId === org.id;
+        const isDisabled = selectingOrgId !== null;
+        return (
+          <button
+            key={org.id}
+            onClick={() => handleSelectOrg(org.id)}
+            disabled={isDisabled}
+            className="flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:bg-muted transition-colors cursor-pointer text-left w-full group disabled:cursor-default disabled:opacity-60"
+          >
+            <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+              {org.name[0]?.toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm text-foreground truncate">
+                {org.name}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {org.slug}
+              </p>
+            </div>
+            {isLoading ? (
+              <Spinner className="size-4 text-muted-foreground shrink-0" />
+            ) : (
+              <ArrowRightIcon className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+            )}
+          </button>
+        );
+      });
     }
     return (
       <Empty>
         <EmptyMedia variant="icon">
-          <Building2 />
+          <Building2Icon />
         </EmptyMedia>
         <EmptyHeader>
           <EmptyTitle>No organizations</EmptyTitle>
@@ -166,6 +297,12 @@ function RouteComponent() {
   }
 
   async function handleSelectOrg(orgId: string) {
+    setSelectingOrgId(orgId);
+    await authClient.organization.setActive({ organizationId: orgId });
+    navigate({ to: rt ?? "/app" });
+  }
+
+  async function handleCreateOrgSuccess(orgId: string) {
     await authClient.organization.setActive({ organizationId: orgId });
     navigate({ to: rt ?? "/app" });
   }
@@ -192,22 +329,14 @@ function RouteComponent() {
           {/* ScrollArea is fixed at 240px — matches 3 skeleton rows — so the divider and create button
               never shift position regardless of loading/empty/populated state or org count. */}
           <ScrollArea className="h-60 mb-6">
-            <div className="flex flex-col gap-3 h-full justify-center">
-              {renderOrgList()}
-            </div>
+            <div className="flex flex-col gap-3">{renderOrgList()}</div>
           </ScrollArea>
 
           {/* Divider */}
           <div className="h-px bg-border mb-6" />
 
           {/* Create new org */}
-          <button className="flex items-center gap-4 rounded-xl border border-dashed border-border px-5 py-4 hover:bg-muted transition-colors cursor-pointer text-left w-full group">
-            <Plus className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-            <span className="flex-1 text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-              Create a new organization
-            </span>
-            <ArrowRight className="size-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-          </button>
+          <CreateOrgSheet onSuccess={handleCreateOrgSuccess} />
         </div>
       </main>
     </div>
