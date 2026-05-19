@@ -49,7 +49,13 @@ function SignInPage() {
       <div className="flex-1 flex flex-col items-center justify-center w-full">
         {/* Logo */}
         <div className="mb-6">
-          <img src="/logo.svg" width={48} height={48} alt="Logo" />
+          <img
+            src="/logo.svg"
+            width={48}
+            height={48}
+            alt="Logo"
+            className="dark:invert"
+          />
         </div>
 
         {/* Heading */}

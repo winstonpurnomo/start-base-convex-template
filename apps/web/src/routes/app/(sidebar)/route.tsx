@@ -26,6 +26,7 @@ function RouteComponent() {
   const user = session?.user;
   const userName = user?.name ?? "";
   const userEmail = user?.email ?? "";
+  const userImage = user?.image ?? null;
   const userInitials = user?.name
     ? user.name
         .split(" ")
@@ -55,6 +56,7 @@ function RouteComponent() {
         userName={userName}
         userEmail={userEmail}
         userInitials={userInitials}
+        userImage={userImage}
         onSignOut={handleSignOut}
         onSwitchOrg={handleSwitchOrg}
         onSettings={handleSettings}

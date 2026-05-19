@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as middleware from "../middleware.js";
 import type * as resource_crud from "../resource/crud.js";
+import type * as user_profile from "../user/profile.js";
 
 import type {
   ApiFromModules,
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   middleware: typeof middleware;
   "resource/crud": typeof resource_crud;
+  "user/profile": typeof user_profile;
 }>;
 
 /**

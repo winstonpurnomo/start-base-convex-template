@@ -19,6 +19,7 @@ import { Route as AuthredirSignupRouteImport } from './routes/auth/(redir)/signu
 import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signin'
 import { Route as AuthpostOrganizationRouteImport } from './routes/auth/(post)/organization'
 import { Route as AppSettingsThemeRouteImport } from './routes/app/settings/theme'
+import { Route as AppSettingsProfileRouteImport } from './routes/app/settings/profile'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const AppRouteRoute = AppRouteRouteImport.update({
@@ -70,6 +71,11 @@ const AppSettingsThemeRoute = AppSettingsThemeRouteImport.update({
   path: '/theme',
   getParentRoute: () => AppSettingsRouteRoute,
 } as any)
+const AppSettingsProfileRoute = AppSettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppSettingsRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/profile': typeof AppSettingsProfileRoute
   '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/(post)/organization': typeof AuthpostOrganizationRoute
   '/auth/(redir)/signin': typeof AuthredirSigninRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/profile'
     | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/profile'
     | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth/(redir)'
     | '/api/auth/$'
+    | '/app/settings/profile'
     | '/app/settings/theme'
     | '/auth/(post)/organization'
     | '/auth/(redir)/signin'
@@ -232,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsThemeRouteImport
       parentRoute: typeof AppSettingsRouteRoute
     }
+    '/app/settings/profile': {
+      id: '/app/settings/profile'
+      path: '/profile'
+      fullPath: '/app/settings/profile'
+      preLoaderRoute: typeof AppSettingsProfileRouteImport
+      parentRoute: typeof AppSettingsRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -255,10 +274,12 @@ const AppsidebarRouteRouteWithChildren = AppsidebarRouteRoute._addFileChildren(
 )
 
 interface AppSettingsRouteRouteChildren {
+  AppSettingsProfileRoute: typeof AppSettingsProfileRoute
   AppSettingsThemeRoute: typeof AppSettingsThemeRoute
 }
 
 const AppSettingsRouteRouteChildren: AppSettingsRouteRouteChildren = {
+  AppSettingsProfileRoute: AppSettingsProfileRoute,
   AppSettingsThemeRoute: AppSettingsThemeRoute,
 }
 

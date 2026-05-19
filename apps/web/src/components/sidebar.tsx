@@ -48,6 +48,7 @@ interface SidebarUserMenuProps {
   name: string;
   email: string;
   initials: string;
+  image?: string | null;
   onSignOut: () => void;
   onSwitchOrg: () => void;
   onSettings: () => void;
@@ -57,6 +58,7 @@ function SidebarUserMenu({
   name,
   email,
   initials,
+  image,
   onSignOut,
   onSwitchOrg,
   onSettings,
@@ -90,8 +92,16 @@ function SidebarUserMenu({
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             render={<DropdownMenuTrigger />}
           >
-            <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0">
-              {initials}
+            <div className="size-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0 overflow-hidden">
+              {image ? (
+                <img
+                  src={image}
+                  alt={name}
+                  className="size-full object-cover"
+                />
+              ) : (
+                initials
+              )}
             </div>
             <span className="truncate text-sm font-medium group-data-[collapsible=icon]:hidden">
               {name}
@@ -148,6 +158,7 @@ interface SidebarProps {
   userName: string;
   userEmail: string;
   userInitials: string;
+  userImage?: string | null;
   onSignOut: () => void;
   onSwitchOrg: () => void;
   onSettings: () => void;
@@ -157,6 +168,7 @@ export function Sidebar({
   userName,
   userEmail,
   userInitials,
+  userImage,
   onSignOut,
   onSwitchOrg,
   onSettings,
@@ -170,7 +182,7 @@ export function Sidebar({
             width={28}
             height={28}
             alt="Acme logo"
-            className="shrink-0"
+            className="shrink-0 dark:invert"
           />
           <span className="font-semibold text-sm text-sidebar-foreground group-data-[collapsible=icon]:hidden">
             Acme
@@ -202,6 +214,7 @@ export function Sidebar({
           name={userName}
           email={userEmail}
           initials={userInitials}
+          image={userImage}
           onSignOut={onSignOut}
           onSwitchOrg={onSwitchOrg}
           onSettings={onSettings}

@@ -11,6 +11,23 @@ import { createLogger } from "evlog";
 import { api } from "./_generated/api";
 import { action, mutation, query } from "./_generated/server";
 
+interface UserSession {
+  id: string;
+  userId: string;
+}
+
+interface UserProfile {
+  id: string;
+  name: string | null;
+  email: string | null;
+  image?: string | null | undefined;
+}
+
+interface UserAuthContext {
+  session: UserSession;
+  user: UserProfile;
+}
+
 interface OrgSession {
   id: string;
   userId: string;
@@ -29,6 +46,10 @@ interface OrgAuthContext {
   user: OrgUser;
 }
 
+type UserLoggedContext = UserAuthContext & {
+  logger: ReturnType<typeof createLogger>;
+};
+
 type OrgLoggedContext = OrgAuthContext & {
   logger: ReturnType<typeof createLogger>;
 };
@@ -36,9 +57,60 @@ type OrgLoggedContext = OrgAuthContext & {
 type CtxWithRunQuery<DataModel extends GenericDataModel = GenericDataModel> =
   Pick<GenericQueryCtx<DataModel>, "runQuery">;
 
-const orgLoggedArgs = {
+const loggedArgs = {
   _path: v.optional(v.string()),
 };
+
+const getUserAuthContext = async <Ctx extends CtxWithRunQuery>(
+  ctx: Ctx
+): Promise<UserAuthContext> => {
+  const data = await ctx.runQuery(api.auth.getSession, {});
+  if (!data || !data.session || !data.user) {
+    throw new Error("Not authenticated");
+  }
+  return {
+    session: { id: data.session.id, userId: data.session.userId },
+    user: data.user,
+  };
+};
+
+const createUserLoggedInput =
+  <Ctx extends CtxWithRunQuery>(
+    method: "GET" | "POST"
+  ): Customization<
+    Ctx,
+    typeof loggedArgs,
+    UserLoggedContext,
+    Record<string, never>
+  >["input"] =>
+  async (ctx, args) => {
+    const logger = createLogger({ method, path: args._path });
+    const result = await getUserAuthContext(ctx);
+    return {
+      ctx: { logger, ...result },
+      args: {},
+      onSuccess: () => {
+        logger.set({ status: 200 });
+        logger.emit();
+      },
+      onError: (err: unknown) => {
+        logger.set({ status: 500, error: err });
+        logger.emit();
+      },
+    };
+  };
+
+export const userAuthedMutation = customMutation(mutation, {
+  args: loggedArgs,
+  input: createUserLoggedInput("POST"),
+});
+
+export const userAuthedQuery = customQuery(query, {
+  args: loggedArgs,
+  input: createUserLoggedInput("GET"),
+});
+
+const orgLoggedArgs = loggedArgs;
 
 const getOrgAuthContext = async <Ctx extends CtxWithRunQuery>(
   ctx: Ctx

@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
   Sidebar as SidebarPrimitive,
 } from "@workspace/ui/components/sidebar";
-import { ChevronLeftIcon, PaletteIcon } from "lucide-react";
+import { ChevronLeftIcon, PaletteIcon, UserIcon } from "lucide-react";
 import z from "zod";
 
 export const Route = createFileRoute("/app/settings")({
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/app/settings")({
 
 const settingsNav = [
   { label: "Theme", icon: PaletteIcon, to: "/app/settings/theme" },
+  { label: "Profile", icon: UserIcon, to: "/app/settings/profile" },
 ] as const;
 
 function SettingsSidebar({ backTo }: { backTo: string }) {
@@ -93,9 +94,7 @@ function RouteComponent() {
             <ChevronLeftIcon className="size-4" />
             Settings
           </Link>
-          <span className="hidden md:block text-sm font-semibold">
-            Settings
-          </span>
+          <span className="hidden md:block text-sm">Settings</span>
         </header>
         <main className="flex-1 overflow-auto">
           <div className="max-w-2xl mx-auto p-6 md:p-8">

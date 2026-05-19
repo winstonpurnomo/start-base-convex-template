@@ -293,8 +293,16 @@ function RouteComponent() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors cursor-pointer outline-none">
-          <div className="size-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold">
-            {initials}
+          <div className="size-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-semibold overflow-hidden">
+            {user.image ? (
+              <img
+                src={user.image}
+                alt={user.name ?? ""}
+                className="size-full object-cover"
+              />
+            ) : (
+              initials
+            )}
           </div>
           <span className="text-sm font-medium text-foreground">
             {user.name}
@@ -351,7 +359,13 @@ function RouteComponent() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 h-14 shrink-0">
         <div className="flex items-center gap-2.5">
-          <img src="/logo.svg" width={28} height={28} alt="Logo" />
+          <img
+            src="/logo.svg"
+            width={28}
+            height={28}
+            alt="Logo"
+            className="dark:invert"
+          />
           <span className="font-semibold text-sm text-foreground">Acme</span>
         </div>
 
