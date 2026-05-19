@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AuthredirRouteRouteImport } from './routes/auth/(redir)/route'
 import { Route as AuthredirSignupRouteImport } from './routes/auth/(redir)/signup'
 import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signin'
@@ -26,6 +27,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AuthredirRouteRoute = AuthredirRouteRouteImport.update({
   id: '/auth/(redir)',
@@ -55,8 +61,9 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
+  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
@@ -64,8 +71,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteRoute
   '/auth': typeof AuthredirRouteRouteWithChildren
+  '/app': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
@@ -74,8 +81,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRouteRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
+  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/(post)/organization': typeof AuthpostOrganizationRoute
   '/auth/(redir)/signin': typeof AuthredirSigninRoute
@@ -87,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/'
     | '/api/auth/$'
     | '/auth/organization'
     | '/auth/signin'
@@ -94,8 +103,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/app'
     | '/auth'
+    | '/app'
     | '/api/auth/$'
     | '/auth/organization'
     | '/auth/signin'
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth/(redir)'
+    | '/app/'
     | '/api/auth/$'
     | '/auth/(post)/organization'
     | '/auth/(redir)/signin'
@@ -113,7 +123,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRouteRoute: typeof AppRouteRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthredirRouteRoute: typeof AuthredirRouteRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   AuthpostOrganizationRoute: typeof AuthpostOrganizationRoute
@@ -134,6 +144,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/auth/(redir)': {
       id: '/auth/(redir)'
@@ -173,6 +190,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppRouteRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
+
 interface AuthredirRouteRouteChildren {
   AuthredirSigninRoute: typeof AuthredirSigninRoute
   AuthredirSignupRoute: typeof AuthredirSignupRoute
@@ -189,7 +218,7 @@ const AuthredirRouteRouteWithChildren = AuthredirRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRouteRoute: AppRouteRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
   AuthredirRouteRoute: AuthredirRouteRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   AuthpostOrganizationRoute: AuthpostOrganizationRoute,
