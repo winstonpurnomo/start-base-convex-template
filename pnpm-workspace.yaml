@@ -2,7 +2,9 @@ packages:
   - "apps/*"
   - "packages/*"
 catalog:
+  "@convex-dev/better-auth": "^0.12.2"
   "@tailwindcss/vite": "^4.3.0"
+  "better-auth": "~1.6.11"
   "@types/node": "^25.8.0"
   "@types/react": "^19.2.14"
   "@types/react-dom": "^19.2.3"

@@ -9,8 +9,8 @@
     "auth:generate": "pnpm dlx auth generate --config convex/betterAuth/auth.ts --output convex/betterAuth/schema.gen.ts"
   },
   "dependencies": {
-    "@convex-dev/better-auth": "^0.12.2",
-    "better-auth": "~1.6.11",
+    "@convex-dev/better-auth": "catalog:",
+    "better-auth": "catalog:",
     "convex": "^1.39.1",
     "convex-helpers": "^0.1.118",
     "evlog": ">=2.10.0 <2.11.0"

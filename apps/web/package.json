@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@convex-dev/better-auth": "^0.12.2",
+    "@convex-dev/better-auth": "catalog:",
     "@convex-dev/react-query": "^0.1.0",
     "@ridemountainpig/svgl-react": "^1.0.16",
     "@tailwindcss/vite": "catalog:",
@@ -25,7 +25,7 @@
     "@tanstack/router-plugin": "^1.168.6",
     "@workspace/backend": "workspace:*",
     "@workspace/ui": "workspace:*",
-    "better-auth": "~1.6.11",
+    "better-auth": "catalog:",
     "lucide-react": "catalog:",
     "nitro": "latest",
     "react": "catalog:",
