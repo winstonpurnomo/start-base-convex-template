@@ -32,7 +32,7 @@ function CardGroupItem({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-group-item"
       className={cn(
-        "flex items-center justify-between gap-4 px-4 py-3.5 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-border",
+        "flex items-center justify-between gap-4 px-4 py-3.5 not-last:border-b not-last:border-border",
         className
       )}
       {...props}
