@@ -20,6 +20,7 @@ import {
   Sidebar as SidebarPrimitive,
   useSidebar,
 } from "@workspace/ui/components/sidebar";
+import { Skeleton } from "@workspace/ui/components/skeleton";
 import {
   BuildingIcon,
   ChevronsUpDownIcon,
@@ -49,6 +50,7 @@ interface SidebarUserMenuProps {
   email: string;
   initials: string;
   image?: string | null;
+  isLoading?: boolean;
   onSignOut: () => void;
   onSwitchOrg: () => void;
   onSettings: () => void;
@@ -59,6 +61,7 @@ function SidebarUserMenu({
   email,
   initials,
   image,
+  isLoading,
   onSignOut,
   onSwitchOrg,
   onSettings,
@@ -80,6 +83,19 @@ function SidebarUserMenu({
     } catch {
       // ignore
     }
+  }
+
+  if (isLoading) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" disabled>
+            <Skeleton className="size-8 rounded-full shrink-0" />
+            <Skeleton className="h-3.5 w-24 group-data-[collapsible=icon]:hidden" />
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
   }
 
   return (
@@ -159,6 +175,7 @@ interface SidebarProps {
   userEmail: string;
   userInitials: string;
   userImage?: string | null;
+  isLoading?: boolean;
   onSignOut: () => void;
   onSwitchOrg: () => void;
   onSettings: () => void;
@@ -169,6 +186,7 @@ export function Sidebar({
   userEmail,
   userInitials,
   userImage,
+  isLoading,
   onSignOut,
   onSwitchOrg,
   onSettings,
@@ -215,6 +233,7 @@ export function Sidebar({
           email={userEmail}
           initials={userInitials}
           image={userImage}
+          isLoading={isLoading}
           onSignOut={onSignOut}
           onSwitchOrg={onSwitchOrg}
           onSettings={onSettings}

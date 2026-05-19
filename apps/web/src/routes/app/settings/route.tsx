@@ -1,6 +1,7 @@
 import {
   createFileRoute,
   Link,
+  linkOptions,
   Outlet,
   redirect,
   useLocation,
@@ -18,8 +19,14 @@ import {
   SidebarRail,
   SidebarTrigger,
   Sidebar as SidebarPrimitive,
+  SidebarGroupLabel,
 } from "@workspace/ui/components/sidebar";
-import { ChevronLeftIcon, Settings2Icon, UserIcon } from "lucide-react";
+import {
+  BuildingIcon,
+  ChevronLeftIcon,
+  Settings2Icon,
+  UserIcon,
+} from "lucide-react";
 import z from "zod";
 
 export const Route = createFileRoute("/app/settings")({
@@ -36,11 +43,26 @@ export const Route = createFileRoute("/app/settings")({
 
 const settingsNav = [
   {
-    label: "Preferences",
-    icon: Settings2Icon,
-    to: "/app/settings/preferences",
+    groupLabel: undefined,
+    items: linkOptions([
+      {
+        label: "Preferences",
+        icon: Settings2Icon,
+        to: "/app/settings/preferences",
+      },
+      { label: "Profile", icon: UserIcon, to: "/app/settings/profile" },
+    ]),
   },
-  { label: "Profile", icon: UserIcon, to: "/app/settings/profile" },
+  {
+    groupLabel: "Organization",
+    items: linkOptions([
+      {
+        label: "Workspace",
+        icon: BuildingIcon,
+        to: "/app/settings/organization",
+      },
+    ]),
+  },
 ] as const;
 
 function SettingsSidebar({ backTo }: { backTo: string }) {
@@ -59,22 +81,25 @@ function SettingsSidebar({ backTo }: { backTo: string }) {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {settingsNav.map(({ label, icon: Icon, to }) => (
-                <SidebarMenuItem key={to}>
-                  <Link to={to}>
-                    <SidebarMenuButton isActive={location.pathname === to}>
-                      <Icon />
-                      <span>{label}</span>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {settingsNav.map(({ groupLabel, items }) => (
+          <SidebarGroup key={groupLabel ?? "<empty>"}>
+            {groupLabel && <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>}
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {items.map(({ label, icon: Icon, to }) => (
+                  <SidebarMenuItem key={to}>
+                    <Link to={to}>
+                      <SidebarMenuButton isActive={location.pathname === to}>
+                        <Icon />
+                        <span>{label}</span>
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </SidebarPrimitive>
   );
@@ -98,7 +123,9 @@ function RouteComponent() {
             <ChevronLeftIcon className="size-4" />
             Settings
           </Link>
-          <span className="hidden md:block text-sm">Settings</span>
+          <span className="hidden md:block text-sm font-semibold">
+            Settings
+          </span>
         </header>
         <main className="flex-1 overflow-auto">
           <div className="max-w-2xl mx-auto p-6 md:p-8">

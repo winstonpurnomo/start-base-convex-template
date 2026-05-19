@@ -3,6 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "@workspace/backend/_generated/api";
 import type { Id } from "@workspace/backend/_generated/dataModel";
+import {
+  CardGroup,
+  CardGroupItem,
+  CardGroupItemControl,
+  CardGroupItemTitle,
+} from "@workspace/ui/components/card-group";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { toastManager } from "@workspace/ui/components/toast";
 import { CameraIcon } from "lucide-react";
@@ -59,47 +65,42 @@ function AvatarUpload({
   }
 
   return (
-    <div className="flex items-center justify-between p-4">
-      <div>
-        <p className="text-sm font-medium">Profile picture</p>
-      </div>
-      <button
-        type="button"
-        aria-label="Upload profile picture"
-        className="relative group size-10 rounded-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        onClick={() => inputRef.current?.click()}
-        disabled={uploading}
-      >
-        {imageUrl ? (
-          <img src={imageUrl} alt={name} className="size-full object-cover" />
-        ) : (
-          <div className="size-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold">
-            {initials}
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          {uploading ? (
-            <Spinner className="size-4 text-white" />
-          ) : (
-            <CameraIcon className="size-4 text-white" />
-          )}
+    <button
+      type="button"
+      aria-label="Upload profile picture"
+      className="relative group size-10 rounded-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      onClick={() => inputRef.current?.click()}
+      disabled={uploading}
+    >
+      {imageUrl ? (
+        <img src={imageUrl} alt={name} className="size-full object-cover" />
+      ) : (
+        <div className="size-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-semibold">
+          {initials}
         </div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          aria-label="Profile picture file input"
-          className="sr-only"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              handleFile(file);
-            }
-            e.target.value = "";
-          }}
-        />
-      </button>
-    </div>
+      )}
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        {uploading ? (
+          <Spinner className="size-4 text-white" />
+        ) : (
+          <CameraIcon className="size-4 text-white" />
+        )}
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        aria-label="Profile picture file input"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            handleFile(file);
+          }
+          e.target.value = "";
+        }}
+      />
+    </button>
   );
 }
 
@@ -116,9 +117,17 @@ function RouteComponent() {
       name: session?.user?.name ?? "",
     },
     onSubmit: async ({ value }) => {
-      await updateProfile({ name: value.name.trim() });
-      await authClient.updateUser({ name: value.name.trim() });
-      toastManager.add({ title: "Profile updated", type: "success" });
+      try {
+        await updateProfile({ name: value.name.trim() });
+        await authClient.updateUser({ name: value.name.trim() });
+        toastManager.add({ title: "Profile updated", type: "success" });
+      } catch (error) {
+        toastManager.add({
+          title: "Failed to update profile",
+          description: error instanceof Error ? error.message : undefined,
+          type: "error",
+        });
+      }
     },
   });
 
@@ -132,46 +141,55 @@ function RouteComponent() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
-      <div className="rounded-lg border divide-y">
-        <AvatarUpload
-          name={userName}
-          imageUrl={imageUrl}
-          onUpload={handleAvatarUpload}
-        />
+      <CardGroup>
+        <CardGroupItem>
+          <CardGroupItemTitle>Profile picture</CardGroupItemTitle>
+          <CardGroupItemControl>
+            <AvatarUpload
+              name={userName}
+              imageUrl={imageUrl}
+              onUpload={handleAvatarUpload}
+            />
+          </CardGroupItemControl>
+        </CardGroupItem>
 
-        <div className="flex items-center justify-between p-4">
-          <p className="text-sm font-medium">Email</p>
-          <span className="text-sm text-muted-foreground">
-            {session?.user?.email}
-          </span>
-        </div>
+        <CardGroupItem>
+          <CardGroupItemTitle>Email</CardGroupItemTitle>
+          <CardGroupItemControl>
+            <span className="text-sm text-muted-foreground">
+              {session?.user?.email}
+            </span>
+          </CardGroupItemControl>
+        </CardGroupItem>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-        >
-          <div className="flex items-center justify-between p-4">
-            <p className="text-sm font-medium">Full name</p>
-            <form.AppField name="name">
-              {(field) => (
-                <input
-                  aria-label="Full name"
-                  className="text-sm bg-transparent text-right outline-none border border-transparent focus:border-border rounded-md px-2 py-1 w-48 transition-colors"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={() => {
-                    field.handleBlur();
-                    form.handleSubmit();
-                  }}
-                  placeholder="Your name"
-                />
-              )}
-            </form.AppField>
-          </div>
-        </form>
-      </div>
+        <CardGroupItem>
+          <CardGroupItemTitle>Full name</CardGroupItemTitle>
+          <CardGroupItemControl>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit();
+              }}
+            >
+              <form.AppField name="name">
+                {(field) => (
+                  <input
+                    aria-label="Full name"
+                    className="text-sm bg-transparent text-right outline-none border border-transparent focus:border-border rounded-md px-2 py-1 w-48 transition-colors"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={() => {
+                      field.handleBlur();
+                      form.handleSubmit();
+                    }}
+                    placeholder="Your name"
+                  />
+                )}
+              </form.AppField>
+            </form>
+          </CardGroupItemControl>
+        </CardGroupItem>
+      </CardGroup>
     </div>
   );
 }

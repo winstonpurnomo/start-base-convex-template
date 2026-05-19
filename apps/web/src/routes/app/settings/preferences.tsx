@@ -1,5 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  CardGroup,
+  CardGroupItem,
+  CardGroupItemControl,
+  CardGroupItemDescription,
+  CardGroupItemLabel,
+  CardGroupItemTitle,
+  CardGroupLabel,
+} from "@workspace/ui/components/card-group";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -23,41 +32,41 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Theme</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Preferences</h1>
       <div>
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
-          Appearance
-        </h2>
-        <div className="rounded-lg border divide-y">
-          <div className="flex items-center justify-between p-4">
-            <div>
-              <p className="text-sm font-medium">Color theme</p>
-              <p className="text-sm text-muted-foreground">
+        <CardGroupLabel>Appearance</CardGroupLabel>
+        <CardGroup>
+          <CardGroupItem>
+            <CardGroupItemLabel>
+              <CardGroupItemTitle>Color theme</CardGroupItemTitle>
+              <CardGroupItemDescription>
                 Select the color theme for the interface
-              </p>
-            </div>
-            <Select
-              value={theme}
-              onValueChange={(v) => {
-                if (v) {
-                  setTheme(v);
-                }
-              }}
-              itemToStringLabel={(v) => v.at(0)?.toUpperCase() + v.slice(1)}
-            >
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {themes.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {themeLabels[t] ?? t}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+              </CardGroupItemDescription>
+            </CardGroupItemLabel>
+            <CardGroupItemControl>
+              <Select
+                value={theme}
+                onValueChange={(v) => {
+                  if (v) {
+                    setTheme(v);
+                  }
+                }}
+                itemToStringLabel={(v) => v.at(0)?.toUpperCase() + v.slice(1)}
+              >
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {themes.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {themeLabels[t] ?? t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </CardGroupItemControl>
+          </CardGroupItem>
+        </CardGroup>
       </div>
     </div>
   );

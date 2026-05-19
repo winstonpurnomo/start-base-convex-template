@@ -21,7 +21,7 @@ function RouteComponent() {
   const router = useRouter();
   const location = useLocation();
   const navigate = Route.useNavigate();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const user = session?.user;
   const userName = user?.name ?? "";
@@ -57,6 +57,7 @@ function RouteComponent() {
         userEmail={userEmail}
         userInitials={userInitials}
         userImage={userImage}
+        isLoading={isPending}
         onSignOut={handleSignOut}
         onSwitchOrg={handleSwitchOrg}
         onSettings={handleSettings}

@@ -20,6 +20,7 @@ import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signi
 import { Route as AuthpostOrganizationRouteImport } from './routes/auth/(post)/organization'
 import { Route as AppSettingsProfileRouteImport } from './routes/app/settings/profile'
 import { Route as AppSettingsPreferencesRouteImport } from './routes/app/settings/preferences'
+import { Route as AppSettingsOrganizationRouteImport } from './routes/app/settings/organization'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const AppRouteRoute = AppRouteRouteImport.update({
@@ -76,6 +77,11 @@ const AppSettingsPreferencesRoute = AppSettingsPreferencesRouteImport.update({
   path: '/preferences',
   getParentRoute: () => AppSettingsRouteRoute,
 } as any)
+const AppSettingsOrganizationRoute = AppSettingsOrganizationRouteImport.update({
+  id: '/organization',
+  path: '/organization',
+  getParentRoute: () => AppSettingsRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/organization': typeof AppSettingsOrganizationRoute
   '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/organization': typeof AppSettingsOrganizationRoute
   '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/organization': typeof AppSettingsOrganizationRoute
   '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
   '/auth/(post)/organization': typeof AuthpostOrganizationRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/organization'
     | '/app/settings/preferences'
     | '/app/settings/profile'
     | '/auth/organization'
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/organization'
     | '/app/settings/preferences'
     | '/app/settings/profile'
     | '/auth/organization'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth/(redir)'
     | '/api/auth/$'
+    | '/app/settings/organization'
     | '/app/settings/preferences'
     | '/app/settings/profile'
     | '/auth/(post)/organization'
@@ -251,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsPreferencesRouteImport
       parentRoute: typeof AppSettingsRouteRoute
     }
+    '/app/settings/organization': {
+      id: '/app/settings/organization'
+      path: '/organization'
+      fullPath: '/app/settings/organization'
+      preLoaderRoute: typeof AppSettingsOrganizationRouteImport
+      parentRoute: typeof AppSettingsRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -274,11 +293,13 @@ const AppsidebarRouteRouteWithChildren = AppsidebarRouteRoute._addFileChildren(
 )
 
 interface AppSettingsRouteRouteChildren {
+  AppSettingsOrganizationRoute: typeof AppSettingsOrganizationRoute
   AppSettingsPreferencesRoute: typeof AppSettingsPreferencesRoute
   AppSettingsProfileRoute: typeof AppSettingsProfileRoute
 }
 
 const AppSettingsRouteRouteChildren: AppSettingsRouteRouteChildren = {
+  AppSettingsOrganizationRoute: AppSettingsOrganizationRoute,
   AppSettingsPreferencesRoute: AppSettingsPreferencesRoute,
   AppSettingsProfileRoute: AppSettingsProfileRoute,
 }

@@ -65,10 +65,18 @@ function CreateResourceSheet({ organizationId }: { organizationId: string }) {
       }),
     },
     onSubmit: async ({ value }) => {
-      await createResource({ organizationId, title: value.title.trim() });
-      setOpen(false);
-      form.reset();
-      toastManager.add({ title: "Resource created", type: "success" });
+      try {
+        await createResource({ organizationId, title: value.title.trim() });
+        setOpen(false);
+        form.reset();
+        toastManager.add({ title: "Resource created", type: "success" });
+      } catch (error) {
+        toastManager.add({
+          title: "Failed to create resource",
+          description: error instanceof Error ? error.message : undefined,
+          type: "error",
+        });
+      }
     },
   });
 
