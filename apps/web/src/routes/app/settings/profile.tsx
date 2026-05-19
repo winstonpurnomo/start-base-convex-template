@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "@workspace/backend/_generated/api";
 import type { Id } from "@workspace/backend/_generated/dataModel";
-import { Separator } from "@workspace/ui/components/separator";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { toastManager } from "@workspace/ui/components/toast";
 import { CameraIcon } from "lucide-react";
@@ -66,6 +65,7 @@ function AvatarUpload({
       </div>
       <button
         type="button"
+        aria-label="Upload profile picture"
         className="relative group size-10 rounded-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
@@ -88,10 +88,13 @@ function AvatarUpload({
           ref={inputRef}
           type="file"
           accept="image/*"
+          aria-label="Profile picture file input"
           className="sr-only"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) {handleFile(file);}
+            if (file) {
+              handleFile(file);
+            }
             e.target.value = "";
           }}
         />
@@ -129,7 +132,6 @@ function RouteComponent() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
-      <Separator />
       <div className="rounded-lg border divide-y">
         <AvatarUpload
           name={userName}
@@ -155,6 +157,7 @@ function RouteComponent() {
             <form.AppField name="name">
               {(field) => (
                 <input
+                  aria-label="Full name"
                   className="text-sm bg-transparent text-right outline-none border border-transparent focus:border-border rounded-md px-2 py-1 w-48 transition-colors"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}

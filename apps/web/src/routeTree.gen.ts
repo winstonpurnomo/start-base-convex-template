@@ -18,8 +18,8 @@ import { Route as AppsidebarIndexRouteImport } from './routes/app/(sidebar)/inde
 import { Route as AuthredirSignupRouteImport } from './routes/auth/(redir)/signup'
 import { Route as AuthredirSigninRouteImport } from './routes/auth/(redir)/signin'
 import { Route as AuthpostOrganizationRouteImport } from './routes/auth/(post)/organization'
-import { Route as AppSettingsThemeRouteImport } from './routes/app/settings/theme'
 import { Route as AppSettingsProfileRouteImport } from './routes/app/settings/profile'
+import { Route as AppSettingsPreferencesRouteImport } from './routes/app/settings/preferences'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const AppRouteRoute = AppRouteRouteImport.update({
@@ -66,14 +66,14 @@ const AuthpostOrganizationRoute = AuthpostOrganizationRouteImport.update({
   path: '/auth/organization',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppSettingsThemeRoute = AppSettingsThemeRouteImport.update({
-  id: '/theme',
-  path: '/theme',
-  getParentRoute: () => AppSettingsRouteRoute,
-} as any)
 const AppSettingsProfileRoute = AppSettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AppSettingsRouteRoute,
+} as any)
+const AppSettingsPreferencesRoute = AppSettingsPreferencesRouteImport.update({
+  id: '/preferences',
+  path: '/preferences',
   getParentRoute: () => AppSettingsRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -88,8 +88,8 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
-  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
   '/auth/signup': typeof AuthredirSignupRoute
@@ -101,8 +101,8 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
-  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/organization': typeof AuthpostOrganizationRoute
   '/auth/signin': typeof AuthredirSigninRoute
   '/auth/signup': typeof AuthredirSignupRoute
@@ -115,8 +115,8 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRouteRouteWithChildren
   '/auth/(redir)': typeof AuthredirRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/settings/preferences': typeof AppSettingsPreferencesRoute
   '/app/settings/profile': typeof AppSettingsProfileRoute
-  '/app/settings/theme': typeof AppSettingsThemeRoute
   '/auth/(post)/organization': typeof AuthpostOrganizationRoute
   '/auth/(redir)/signin': typeof AuthredirSigninRoute
   '/auth/(redir)/signup': typeof AuthredirSignupRoute
@@ -130,8 +130,8 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/preferences'
     | '/app/settings/profile'
-    | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
     | '/auth/signup'
@@ -143,8 +143,8 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth'
     | '/api/auth/$'
+    | '/app/settings/preferences'
     | '/app/settings/profile'
-    | '/app/settings/theme'
     | '/auth/organization'
     | '/auth/signin'
     | '/auth/signup'
@@ -156,8 +156,8 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/auth/(redir)'
     | '/api/auth/$'
+    | '/app/settings/preferences'
     | '/app/settings/profile'
-    | '/app/settings/theme'
     | '/auth/(post)/organization'
     | '/auth/(redir)/signin'
     | '/auth/(redir)/signup'
@@ -237,18 +237,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthpostOrganizationRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/settings/theme': {
-      id: '/app/settings/theme'
-      path: '/theme'
-      fullPath: '/app/settings/theme'
-      preLoaderRoute: typeof AppSettingsThemeRouteImport
-      parentRoute: typeof AppSettingsRouteRoute
-    }
     '/app/settings/profile': {
       id: '/app/settings/profile'
       path: '/profile'
       fullPath: '/app/settings/profile'
       preLoaderRoute: typeof AppSettingsProfileRouteImport
+      parentRoute: typeof AppSettingsRouteRoute
+    }
+    '/app/settings/preferences': {
+      id: '/app/settings/preferences'
+      path: '/preferences'
+      fullPath: '/app/settings/preferences'
+      preLoaderRoute: typeof AppSettingsPreferencesRouteImport
       parentRoute: typeof AppSettingsRouteRoute
     }
     '/api/auth/$': {
@@ -274,13 +274,13 @@ const AppsidebarRouteRouteWithChildren = AppsidebarRouteRoute._addFileChildren(
 )
 
 interface AppSettingsRouteRouteChildren {
+  AppSettingsPreferencesRoute: typeof AppSettingsPreferencesRoute
   AppSettingsProfileRoute: typeof AppSettingsProfileRoute
-  AppSettingsThemeRoute: typeof AppSettingsThemeRoute
 }
 
 const AppSettingsRouteRouteChildren: AppSettingsRouteRouteChildren = {
+  AppSettingsPreferencesRoute: AppSettingsPreferencesRoute,
   AppSettingsProfileRoute: AppSettingsProfileRoute,
-  AppSettingsThemeRoute: AppSettingsThemeRoute,
 }
 
 const AppSettingsRouteRouteWithChildren =

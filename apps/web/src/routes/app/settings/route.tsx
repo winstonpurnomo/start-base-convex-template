@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
   Sidebar as SidebarPrimitive,
 } from "@workspace/ui/components/sidebar";
-import { ChevronLeftIcon, PaletteIcon, UserIcon } from "lucide-react";
+import { ChevronLeftIcon, Settings2Icon, UserIcon } from "lucide-react";
 import z from "zod";
 
 export const Route = createFileRoute("/app/settings")({
@@ -28,14 +28,18 @@ export const Route = createFileRoute("/app/settings")({
   }),
   beforeLoad: ({ location }) => {
     if (location.pathname === "/app/settings") {
-      throw redirect({ to: "/app/settings/theme" });
+      throw redirect({ to: "/app/settings/preferences" });
     }
   },
   component: RouteComponent,
 });
 
 const settingsNav = [
-  { label: "Theme", icon: PaletteIcon, to: "/app/settings/theme" },
+  {
+    label: "Preferences",
+    icon: Settings2Icon,
+    to: "/app/settings/preferences",
+  },
   { label: "Profile", icon: UserIcon, to: "/app/settings/profile" },
 ] as const;
 

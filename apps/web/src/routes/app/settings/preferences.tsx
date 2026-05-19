@@ -1,8 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select";
 import { useTheme } from "tanstack-theme-kit";
 
-export const Route = createFileRoute("/app/settings/theme")({
+export const Route = createFileRoute("/app/settings/preferences")({
   component: RouteComponent,
 });
 
@@ -14,10 +20,6 @@ const themeLabels: Record<string, string> = {
 
 function RouteComponent() {
   const { theme, setTheme, themes } = useTheme();
-
-  const displayThemes = themes.includes("system")
-    ? themes
-    : [...themes, "system"];
 
   return (
     <div className="space-y-6">
@@ -34,18 +36,26 @@ function RouteComponent() {
                 Select the color theme for the interface
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              {displayThemes.map((t) => (
-                <Button
-                  key={t}
-                  variant={theme === t ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setTheme(t)}
-                >
-                  {themeLabels[t] ?? t}
-                </Button>
-              ))}
-            </div>
+            <Select
+              value={theme}
+              onValueChange={(v) => {
+                if (v) {
+                  setTheme(v);
+                }
+              }}
+              itemToStringLabel={(v) => v.at(0)?.toUpperCase() + v.slice(1)}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {themes.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {themeLabels[t] ?? t}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
